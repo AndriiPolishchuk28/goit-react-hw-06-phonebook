@@ -1,6 +1,9 @@
 import * as yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import css from './ContactForm.module.css';
+import { nanoid } from 'nanoid';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'components/redux/contactsSlice';
 
 const initialValues = {
   name: '',
@@ -12,10 +15,31 @@ const schema = yup.object().shape({
   number: yup.number().min(6).required(),
 });
 
-export const ContactForm = ({ addHandle }) => {
+export const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contactsScope.contacts);
+
   const handleSubmit = ({ name, number }, { resetForm }) => {
-    addHandle(name, number);
+    addName(name, number);
     resetForm();
+  };
+
+  const addName = (name, number) => {
+    const newContact = {
+      id: nanoid(),
+      name,
+      number,
+    };
+
+    const existContact = contacts.some(
+      elem => elem.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (!existContact) {
+      dispatch(addContact(newContact));
+    } else {
+      alert(`${name} is already in contacts`);
+    }
   };
 
   return (
