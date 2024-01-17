@@ -1,4 +1,3 @@
-import { configureStore, createAction } from '@reduxjs/toolkit';
 import { createStore } from 'redux';
 import { devToolsEnhancer } from '@redux-devtools/extension';
 
