@@ -2,13 +2,14 @@ import { ContactForm } from './ContactForm/ContactForm';
 import { nanoid } from 'nanoid';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    JSON.parse(localStorage.getItem('contacts')) ?? []
-  );
-  const [filter, setFilter] = useState('');
+  const { contacts, filter } = useSelector(state => state);
+  const dispatch = useDispatch();
+
+  console.log(contacts);
 
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
@@ -26,14 +27,14 @@ export const App = () => {
     );
 
     if (!existContact) {
-      setContacts(state => [newContact, ...state]);
+      dispatch({ type: 'contact/add', payload: newContact });
     } else {
       alert(`${name} is already in contacts`);
     }
   };
 
   const handleOnChange = e => {
-    setFilter(e.target.value);
+    dispatch({ type: 'filter', payload: e.target.value });
   };
 
   const visibleContacts = () => {
@@ -44,7 +45,7 @@ export const App = () => {
   };
 
   const deleteContact = id => {
-    setContacts(state => state.filter(elem => elem.id !== id));
+    dispatch({ type: 'contact/delete', payload: id });
   };
 
   return (
